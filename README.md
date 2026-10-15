@@ -35,7 +35,7 @@
 
 ## 1. 系统架构与数据流程
 
-![QTM PAF Visual3D processing workflow](docs/images/paf-workflow.svg)
+![QTM PAF Visual3D processing workflow](Documentation/paf-workflow.svg)
 
 整体数据流：**QTM 采集 C3D** → **PAF 触发** → **Visual3D 命令行 /s 模式** → **Pipeline 自动处理** → **\*\_Result.cmz + DATA\_\*.txt**。
 
@@ -279,12 +279,12 @@ R_SIA    L_SIA
 
 每侧大腿和小腿均固定四点追踪板；四个 `R_TH4、L_TH4、R_SK4、L_SK4` 在静态文件中全部存在时加载 `Model_Cast_Lower_Body.mdh`。四段分别使用对应的 `_1–4` 追踪点。
 
-![四点追踪板贴点示意](docs/images/Cast.jpg)
+![四点追踪板贴点示意](Documentation/Cast.jpg)
 
 *四点追踪板贴点示意*
 
 **追踪板位置：**  
-![追踪板位置示意](docs/images/Cluster.png)
+![追踪板位置示意](Documentation/Cluster.png)
 
 静态文件中四个 `_4` 标签齐全是自动选择条件；它本身不证明追踪板物理固定可靠。采集和质控时还需检查板上点间距、刚体形状稳定性、动态轨迹缺口和软组织运动。
 

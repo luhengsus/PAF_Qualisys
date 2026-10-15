@@ -178,6 +178,13 @@ PAF 在执行 Visual3D 分析前，使用内置 **PHP 引擎**对 Pipeline 模�
 
 ## 4. 采集前准备
 
+[Qualisys 官方示例](https://github.com/qualisys/paf-visual3d-example#preparing-for-processing)说明，其示例可用 Visual3D 或 Sift 执行相同脚本并生成相同输出。本项目的 `Processing Double` 和 `Processing Dominance` 当前按 Visual3D 配置；Sift 在本项目中的运行结果尚未核验。
+
+首次使用时，按官方的 Visual3D 设置步骤准备处理软件：
+
+1. 安装 Visual3D。
+2. 在 QTM 打开 **Project Options → Miscellaneous → Folder Options**，将 `Visual3D` 的程序路径设为 `C:\Program Files\Visual3D x64\Visual3D.exe`；如果安装在其他位置，选择实际的 `Visual3D.exe`。
+
 | 项目 | 要求 | 说明 |
 | --- | --- | --- |
 | 相机系统校准 | 残差 < 实验要求上限 | 确保捕捉体积覆盖完整运动范围 |

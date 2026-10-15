@@ -1,10 +1,10 @@
 # PAF_Qualisys: 运动生物力学数据采集与处理 SOP
 
 **Author:** Heng Lu  | 
-**版本：**1.5.0  | 
-**日期：**2026/10/16  | 
-**适用项目：**`PAF_v3d`  | 
-**处理引擎：**Visual3D 2024.10.4+
+**版本：** 1.5.0  | 
+**日期：** 2026/10/16  | 
+**适用项目：** `PAF_v3d`  | 
+**处理引擎：** Visual3D 2024.10.4+
 
 基于 **Qualisys Track Manager (QTM)** 采集的三维动作捕捉数据与力台数据，配合 [**Project Automation Framework (PAF)**](https://github.com/qualisys/paf-visual3d-example) 驱动 **Visual3D** 自动建模、运动学/动力学计算与数据导出。本文覆盖采集准备、贴点方案、模型选择逻辑、滤波参数、Pipeline 处理流程、质量控制和输出规范。
 

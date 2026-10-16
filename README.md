@@ -6,7 +6,9 @@
 **适用项目：** `PAF_v3d`  | 
 **处理引擎：** Visual3D 2024.10.4+
 
-基于 **Qualisys Track Manager (QTM)** 采集的三维动作捕捉数据与力台数据，配合 [**Project Automation Framework (PAF)**](https://github.com/qualisys/paf-visual3d-example) 驱动 **Visual3D** 自动建模、运动学/动力学计算与数据导出。本文覆盖采集准备、贴点方案、模型选择逻辑、滤波参数、Pipeline 处理流程、质量控制和输出规范。
+[**Project Automation Framework (PAF)**](https://github.com/qualisys/paf-visual3d-example) 旨在贯通从初始数据采集到最终报告生成的流程，节省时间，并提高数据采集与处理的一致性。本项目使用 **Qualisys Track Manager (QTM)** 采集三维动作捕捉与力台数据，由 PAF 驱动 **Visual3D** 自动建模、计算运动学与动力学，并导出分析数据。即使由 Visual3D 承担全部生物力学计算，事件、模型、报告模板及其他分析组件仍可按需在 Visual3D 中调整。上述 PAF 用途与灵活性见 [Qualisys 官方说明](https://github.com/qualisys/paf-documentation#purpose-and-application-of-paf)。
+
+第 1 节展示本项目的数据流程；本文还覆盖采集准备、贴点方案、模型选择逻辑、滤波参数、Pipeline 处理、质量控制和输出规范。
 
 > **下载文件替换paf-visual3d-example即可**。
 

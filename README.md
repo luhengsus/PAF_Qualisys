@@ -113,6 +113,10 @@ PAF_v3d/
 
 **标准操作流程：**
 
+[![Qualisys 官方 PAF 标准操作流程示意](Documentation/Qualisys-PAF/Workflow.png)](Documentation/Qualisys-PAF/Workflow.png)
+
+*Qualisys 官方 PAF 通用流程示意；图中的项目、菜单和报告步骤为官方示例，以下编号步骤以本项目配置为准。点击图片查看原图。来源：[PAF Documentation — Workflow.png](https://github.com/qualisys/paf-documentation/blob/main/assets/images/Workflow.png)。*
+
 1. 在 QTM 中录入受试者信息：`ID`、`Name`、`Height` (m)、`Weight` (kg)、`Dominance` (Left/Right)、`Sex`。
 2. 采集 **1 个静态文件**（`Static*.c3d`），用于模型标定。
 3. 静态试验确认双侧大腿和小腿各 `_1–3` 及模型所需膝、踝、足部标记完整；记录四个 `_4` 是否全部存在。

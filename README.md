@@ -125,32 +125,41 @@ PAF_v3d/
 
 ## 3. PAF 配置与自动化机制
 
+本节按本项目的 `Settings.paf` 与 Pipeline 说明实际使用的 PAF 机制。官方依据为 [Qualisys PAF Documentation（v3.0.0）](https://github.com/qualisys/paf-documentation)；图示来自该仓库，仅用于解释 QTM 界面和机制，图中的示例项目名称、层级及分析菜单并非 `PAF_v3d` 的配置。图片按 [Qualisys 原仓库的 MIT 许可](Documentation/Qualisys-PAF/LICENSE)保留署名。
+
+[![Qualisys 官方示例：PAF 项目层级](Documentation/Qualisys-PAF/Folder_structure.png)](Documentation/Qualisys-PAF/Folder_structure.png)
+
+*图 3-1. 官方示例展示 Subject、Session、Measurement 的层级概念；本项目的实际层级见下表和 `Settings.paf`。来源：[官方 Folder structure and relevant files](https://github.com/qualisys/paf-documentation#folder-structure-and-relevant-files)。*
+
 ### 3.1 Settings.paf — 项目配置文件
 
-`Settings.paf` 是 PAF 项目的核心配置文件，采用 **YAML 1.2** 格式。QTM 加载项目时自动读取该文件并重新配置项目视图（含树形结构、字段定义、分析菜单等）。**修改后需重启 QTM 并重新加载项目**才能生效。
+`Settings.paf` 是 PAF 项目的核心配置文件。Qualisys 说明其解析器遵循 YAML 1.2 的**大部分**语法；缩进不能使用 Tab，名称与键值大多区分大小写。QTM 在载入项目时读取该文件，修改后需重启 QTM 并重新载入项目。依据：[Settings.paf 的作用](https://github.com/qualisys/paf-documentation#purpose)、[YAML 规则](https://github.com/qualisys/paf-documentation#yaml)。
 
 主要配置段：
 
-| 配置段 | 作用 | 本项目设定 |
+| 配置段 | 本项目实际设定 | 官方依据 |
 | --- | --- | --- |
-| `Globals` | 项目根设置：Project ID、日期/时间格式、文件名过滤器、默认字段 | `Project ID: PAF_v3d`；日期格式 ISO；24 小时制 |
-| `Package Information` | 包元数据：名称、版本、最低 QTM 版本要求、编码声明 | 版本 `1.0.5`；要求 QTM ≥ `2.16.3600`；ANSI 编码 |
-| `Types` | 定义项目层级结构（类/类型/子项），含字段默认值和可用的分析列表 | Subject → Session → Measurement（静态/动态） |
-| `Measurements` | 测量类型定义（静态标定 / 动态任务），含采集参数 | Static（1个）、Dynamic（1–50个） |
-| `Analyses` | 定义可用分析及其类型、前置条件、模板文件、输出文件 | Processing Double / Dominance / Export c3d / Generate .trc .sto |
-| `Fields` | 全局字段定义：类型（Integer/Float/String/Enum/Boolean）、默认值、约束、单位 | ID, Name, Height, Weight, Dominance, Sex, DOB, Comments 等 |
-| `Columns` | 树视图列配置（列名、宽度、绑定字段） | — |
+| 根级设置 | `Project ID: Open PAF Visual3D Example`、`Root type: Subject`、`Date format: Iso`、文件名过滤器；配置文件**没有显式设置**时间格式。项目目录名 `PAF_v3d` 与 `Project ID` 是不同概念。 | [Globals](https://github.com/qualisys/paf-documentation#globals) |
+| `Package Information` | 包名 `Visual3D Example`、版本 `1.0.5`、最低 QTM `2.16.3600`。`Encoding bytes` 为包的编码标记；编辑时须按官方编码要求保存。 | [Package Information](https://github.com/qualisys/paf-documentation#package-information) |
+| `Types` | `Subject.Participant` → `Session.Session`；Session 定义 `Measurements` 与 `Analyses`，测量文件直接属于 Session。 | [Types](https://github.com/qualisys/paf-documentation#types)、[Analysis Modes](https://github.com/qualisys/paf-documentation#analysis-modes) |
+| `Measurements` | `Static`：1 个、`Measurement type: Static`；`Dynamic`：1–50 个、`Measurement type: Dynamic`；两类均配置 AIM 模型。 | [Measurements](https://github.com/qualisys/paf-documentation#measurements) |
+| `Analyses` | Session 菜单列出 `Processing Dominance`、`Processing Double`、`Export c3d`、`Export Matlab`、`Generate .trc and .sto`；实际类型见 3.3。 | [Overview of analyses](https://github.com/qualisys/paf-documentation#overview-of-analyses) |
+| `Fields`、`Columns` | 定义受试者/Session 字段、默认值、单位与项目树列；例如 `Dominance` 默认为 `Right`，身高单位为 m、体重单位为 kg。 | [Fields](https://github.com/qualisys/paf-documentation#fields)、[Columns](https://github.com/qualisys/paf-documentation#columns) |
 
-**本项目分析执行模式：**`Session` 类型同时定义了 `Measurements` 和 `Analyses`（见上方 Settings.paf），测量文件（Static / Dynamic）直接位于 Session 文件夹下，分析逐个 Session 执行。所有分析均通过 `External program` 类型调用 Visual3D（参数 `/s` 静默模式），PHP 预处理 `.v3s` 模板后执行。
+**本项目采用 Session mode：**测量文件直接位于 Session 文件夹，分析按 Session 启动。三项 Visual3D 菜单使用 `External program`；OpenSim 导出使用 `Instantiate template`，Matlab 导出另用 `External program`。官方还定义 Parent sessions mode，但当前 `Settings.paf` 未采用。依据：[Analysis Modes](https://github.com/qualisys/paf-documentation#analysis-modes)、[External program](https://github.com/qualisys/paf-documentation#external-program)、[Instantiate template](https://github.com/qualisys/paf-documentation#instantiate-template)。
+
+[![Qualisys 官方示例：QTM 项目视图](Documentation/Qualisys-PAF/Pane.png)](Documentation/Qualisys-PAF/Pane.png)
+
+*图 3-2. 官方示例中的数据树、选中项字段和采集控件；本项目的具体字段与菜单由 `Settings.paf` 决定。来源：[官方 PAF 项目视图说明](https://github.com/qualisys/paf-documentation#purpose)。*
 
 ### 3.2 PHP 模板预处理
 
-PAF 在执行 Visual3D 分析前，使用内置 **PHP 引擎**对 Pipeline 模板（`.v3s`）进行预处理。流程如下：
+`Processing Double`、`Processing Dominance` 与 `Export c3d` 均配置 `Export session: Yes`、`Export measurements: c3d` 和 `Template files: ['*.v3s']`。QTM 先导出 Session 元数据和被选中测量的 C3D，再对模板执行 PHP 预处理。两条主 Pipeline 顶部显式包含 `template_xml.php`，由它解析 `session.xml`；这一步由本项目模板实现，不能误写成所有 PAF 分析自动执行。依据：[External program 属性](https://github.com/qualisys/paf-documentation#external-program)、[官方 PHP 说明](https://github.com/qualisys/paf-documentation#php)。流程如下：
 
-1. QTM 导出当前 Session 的元数据为 `session.xml`
-2. PHP 解析 `session.xml`，填充 `$subject`、`$session`、`$measurements` 等变量
-3. PHP 处理 Pipeline 模板中的 `<?= ... ?>` 占位符，替换为实际路径和参数值
-4. 生成最终的 Pipeline 脚本，传递给 Visual3D 执行
+1. QTM 将当前 Session 元数据导出为 `session.xml`，并将勾选 `Used` 的测量导出为 C3D。
+2. PHP 实例化所选 `.v3s` 模板；主模板包含 `template_xml.php`，填充 `$subject`、`$session`、`$measurements`。
+3. 模板中按 `Used` 和 `Measurement_type` 选择静态/动态文件，展开 `<?= ... ?>` 占位符与路径。
+4. QTM 使用 `/s` 参数启动 Visual3D 执行实例化脚本；脚本随后建模、计算、保存 `.cmz` 并导出 `DATA_*.txt`。
 
 **常用 PHP 变量：**
 
@@ -162,7 +171,7 @@ PAF 在执行 Visual3D 分析前，使用内置 **PHP 引擎**对 Pipeline 模�
 | `$subject['Height']` | 受试者身高 (m) | `1.735` |
 | `$subject['Weight']` | 受试者体重 (kg) | `74.31` |
 | `$subject['Dominance']` | 优势侧 | `Right` / `Left` |
-| `$m['Used']` | 测量文件是否被勾选 | `true` / `false` |
+| `$m['Used']` | 测量文件是否被勾选；本项目模板匹配字符串 `True` | `True` / `False` |
 | `$m['Measurement_type']` | 测量类型 | `Static` / `Dynamic` |
 | `$batch_processing_info` | 批处理标记 (QTM 2026.1+) | `"batch"` 或空字符串 |
 
@@ -178,14 +187,33 @@ PAF 在执行 Visual3D 分析前，使用内置 **PHP 引擎**对 Pipeline 模�
 
 **PHP 换行注意：**PHP 的 `?>` 标签会吞掉紧随其后的换行符。如需保留换行，在 `?>` 后加一个空格：`<?=$var;?>` 。
 
+官方也说明，带 PHP 的源模板不能直接当作纯 Visual3D Pipeline 运行；排查时应查看 Session 中实例化后的脚本。依据：[Preparing Visual3D scripts for PAF](https://github.com/qualisys/paf-documentation#preparing-visual3d-scripts-for-paf)、[Editing Pipeline scripts](https://github.com/qualisys/paf-documentation#editing-pipeline-scripts)。
+
 ### 3.3 本项目分析类型
 
 | 分析名称 | 类型 | 模板 / 程序 | 输出文件 | 说明 |
 | --- | --- | --- | --- | --- |
 | `Processing Double` | `External program` | `pipeline_create_workspace.v3s` | `DATA_*.txt` (双侧) | 调用 Visual3D `/s` 静默模式，标准双侧输出 |
 | `Processing Dominance` | `External program` | `pipeline_create_workspace_Dominance.v3s` | `DATA_*.txt` (优势侧) | 根据 `Dominance` 字段仅输出优势侧数据 |
-| `Export c3d` | `External program` | `pipeline_export_c3d.v3s` | `*.c3d` | 导出处理后的 C3D（滤波后 marker + 力学数据） |
-| `Generate .trc and .sto` | `Instantiate template` | `OpensimRunProcessing.php` | `*.trc` + `*.sto` | 生成 OpenSim 格式运动学/动力学文件 |
+| `Export c3d` | `External program` | `pipeline_export_c3d.v3s` | 待核验 | `Settings.paf` 引用该模板，但当前项目的 `Templates` 目录未找到此文件；不能将此项视为已可运行。 |
+| `Export Matlab` | `External program` | `example.m` | `.mat` 导出；后续 Matlab 结果待核验 | 通过 `Program display name: Matlab` 启动。 |
+| `Generate .trc and .sto` | `Instantiate template` | `OpensimRunProcessing.php` | 配置写有 `Export measurements: [trc, sto]` 和 `Output file: log.txt`；实际生成结果待核验 | 与 Visual3D 三项不同，属于 PHP 模板实例化；官方该类型的属性说明未列出 `Export measurements`，因此不据配置推断导出成功。 |
+
+`External program` 的可执行文件路径由各计算机 QTM 的 Folder Options 配置，`Program display name` 只用于指向该设置；`Arguments` 中的 `$WorkingDirectory$` 会展开为当前 Session 路径。`Output file` 若配置，仅供 QTM 判断分析状态，不能替代对实际结果文件的检查。依据：[External program](https://github.com/qualisys/paf-documentation#external-program)、[Overview of analyses](https://github.com/qualisys/paf-documentation#overview-of-analyses)、[Instantiate template](https://github.com/qualisys/paf-documentation#instantiate-template)。
+
+### 3.4 启动、批处理与完成判定
+
+1. 在 QTM 的 Session 中勾选需要的 Static / Dynamic 测量为 `Used`，再选择 `Processing Double` 或 `Processing Dominance`。官方说明分析的 `Measurements` 选择只作用于被标记为 `Used` 的文件；本项目主模板又按 `$m['Used']` 筛选。依据：[Overview of analyses](https://github.com/qualisys/paf-documentation#overview-of-analyses)。
+2. 当前三项 Visual3D 分析均设置 `Do not wait for Application: Yes`。QTM 提交或返回**不能证明** Visual3D 已完成；须确认进程结束、检查日志及本次新生成的 `*_Result.cmz`、`DATA_*.txt`。其中“检查新鲜度与内容”是本项目的质量控制要求，不是官方 `Output file` 属性所能保证。依据：[External program 的等待行为](https://github.com/qualisys/paf-documentation#external-program)。
+3. Qualisys 文档说明 **QTM 2026.1 起**可在向导中用 `Ctrl` + 左键选取多个 Session 后对同名分析发起批处理；不含该分析的 Session 会跳过，警告与错误写入 Messages。项目配置的最低版本 `2.16.3600` **不保证**具备这项界面功能；具体设备需核对 QTM 版本。依据：[Batch processing](https://github.com/qualisys/paf-documentation#batch-processing-introduced-in-qtm-20261)。
+
+[![Qualisys 官方示例：多 Session 批处理入口](Documentation/Qualisys-PAF/Batch_processing.png)](Documentation/Qualisys-PAF/Batch_processing.png)
+
+*图 3-3. 官方批处理界面示例（示例分析来自另一套 PAF 包）；本项目应选择自己的 `Processing Double` 或 `Processing Dominance`。点击图片查看原图。来源：[官方 Batch processing](https://github.com/qualisys/paf-documentation#batch-processing-introduced-in-qtm-20261)。*
+
+### 3.5 官方文档的适用边界
+
+官方还介绍 `Visual3D` 专用分析类型、`Compound`、`Report`、骨骼求解、`Run script`、Parent sessions mode 与包安装流程。这些是 **PAF 可用机制**，不能仅因出现在官方文档中就视为本项目已启用。本节以当前 `Settings.paf` 和模板为准；需要扩展时再查[官方分析类型总览](https://github.com/qualisys/paf-documentation#overview-of-analyses)、[包安装说明](https://github.com/qualisys/paf-documentation#making-a-package-available-in-qtm)。
 
 <a name="s3"></a>
 

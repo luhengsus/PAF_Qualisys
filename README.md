@@ -52,7 +52,7 @@
 **PAF 分析类型：**  
 - `Processing Double`：调用 `pipeline_create_workspace.v3s`，导出双侧数据  
 - `Processing Dominance`：调用 `pipeline_create_workspace_Dominance.v3s`，根据受试者 `Dominance` 字段导出优势侧数据  
-- `Export c3d`：调用 `pipeline_export_c3d.v3s`，导出处理后的 C3D  
+- `Export c3d`：QTM 导出选中测量的 C3D，随后调用 `pipeline_export_c3d.v3s` 打开动态文件并添加标签；当前脚本未另存处理后的 C3D
 - `Generate .trc and .sto`：生成 OpenSim 格式文件
 
 <a name="s2"></a>
@@ -201,7 +201,7 @@ PAF_v3d/
 | --- | --- | --- | --- | --- |
 | `Processing Double` | `External program` | `pipeline_create_workspace.v3s` | `DATA_*.txt` (双侧) | 调用 Visual3D `/s` 静默模式，标准双侧输出 |
 | `Processing Dominance` | `External program` | `pipeline_create_workspace_Dominance.v3s` | `DATA_*.txt` (优势侧) | 根据 `Dominance` 字段仅输出优势侧数据 |
-| `Export c3d` | `External program` | `pipeline_export_c3d.v3s` | 待核验 | `Settings.paf` 引用该模板，但当前项目的 `Templates` 目录未找到此文件；不能将此项视为已可运行。 |
+| `Export c3d` | `External program` | `pipeline_export_c3d.v3s`（文件已恢复） | QTM 导出的选中测量 C3D；脚本未另存新文件 | 静态检查确认脚本打开 `Used` 的动态 C3D 并添加标签，未见保存或导出命令；运行结果仍待核验。 |
 | `Export Matlab` | `External program` | `example.m` | `.mat` 导出；后续 Matlab 结果待核验 | 通过 `Program display name: Matlab` 启动。 |
 | `Generate .trc and .sto` | `Instantiate template` | `OpensimRunProcessing.php` | 配置写有 `Export measurements: [trc, sto]` 和 `Output file: log.txt`；实际生成结果待核验 | 与 Visual3D 三项不同，属于 PHP 模板实例化；官方该类型的属性说明未列出 `Export measurements`，因此不据配置推断导出成功。 |
 
@@ -726,7 +726,7 @@ WARNING!! Weight not specified or invalid!
 | `pipeline_create_workspace.v3s` | 主 Pipeline：加载→滤波→建模→计算→导出双侧数据 |
 | `pipeline_create_workspace_Dominance.v3s` | 同上，但根据 Dominance 字段仅导出优势侧数据 |
 | `pipeline_Modelcomputing.v3s` | 运动学/动力学计算子脚本（被主 Pipeline 调用） |
-| `pipeline_export_c3d.v3s` | 导出处理后的 C3D 文件 |
+| `pipeline_export_c3d.v3s` | 打开 `Used` 的动态 C3D 并添加标签；当前脚本未另存处理后的 C3D |
 | `*.mdh` | Visual3D 模型模板（分段定义、关节自由度、惯性参数） |
 | `report.rgt` | Visual3D 报告模板 |
 | `Muscle.v3s` | 肌肉分析 Pipeline |
